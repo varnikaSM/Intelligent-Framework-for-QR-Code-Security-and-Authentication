@@ -1,0 +1,8 @@
+pip install pillow numpy opencv-python qrcode tensorflow matplotlib scikit-learn tqdm
+
+DatasetGen.py:
+
+Distortions Included (15+), Robust (real-world) distortions, Gaussian blur, Motion blur, JPEG compression, Brightness/contrast changes, Gaussian noise, Additive noise, Perspective warp, Rotation, Scaling, Color jitter, Random grayscale, Background replacement, Random occlusion, Scratch lines, Print-scan simulation, Color inversion, Random color QR codes
+
+For module 3:
+1. pip install qrcode pillow pywavelets opencv-python
