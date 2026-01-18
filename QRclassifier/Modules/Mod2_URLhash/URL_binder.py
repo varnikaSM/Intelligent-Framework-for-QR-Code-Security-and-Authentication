@@ -1,24 +1,7 @@
 import hashlib
 from urllib.parse import urlencode, urlparse, parse_qsl
-
-#Normalising the URL to get it to lower case. For Eg: https://example.com/ is the same as https://Example.com, but both give different URL hashes if not normalised.
-#The query parameters are also sorted.
-def normalizeUrl(url: str) -> str:
-    url=url.strip()
-    parsed=urlparse(url)
-    scheme=parsed.scheme.lower()
-    netloc=parsed.netloc.lower()
-    path=parsed.path.rstrip('/')
-    if not path:
-        path=''
-    queryParameters=parse_qsl(parsed.query)
-    queryParameters.sort()
-    sortedQuery=urlencode(queryParameters)
-    normalisedURL=f"{scheme}://{netloc}{path}"
-    if sortedQuery:
-        normalisedURL+=f"?{sortedQuery}"
-    return normalisedURL
-
+from cryptography.hazmat.primitives.asymmetric import ed25519
+'''
 #SHA-256: Input: URL, Output: 32 byte (256 bit) binary data - unreadable by default
 def hashURL(URL): 
     normalisedURL=normalizeUrl(URL)
@@ -46,3 +29,46 @@ bitsAttack = generateURLid(urlAttack)
 print("Original vs Same URL Match:", bitsOriginal == bitsSame)
 print("Original vs Attack URL Match:", bitsOriginal == bitsAttack)
 print("Bitstream Length:", len(bitsOriginal))
+'''
+#Normalising the URL to get it to lower case. For Eg: https://example.com/ is the same as https://Example.com, but both give different URL hashes if not normalised.
+#The query parameters are also sorted.
+class IdentityBinder:
+    def normalizeUrl(self, url: str) -> str:
+        url=url.strip()
+        parsed=urlparse(url)
+        scheme=parsed.scheme.lower()
+        netloc=parsed.netloc.lower()
+        path=parsed.path.rstrip('/')
+        if not path:
+            path=''
+        queryParameters=parse_qsl(parsed.query)
+        queryParameters.sort()
+        sortedQuery=urlencode(queryParameters)
+        normalisedURL=f"{scheme}://{netloc}{path}"
+        if sortedQuery:
+            normalisedURL+=f"?{sortedQuery}"
+        return normalisedURL
+
+    def generateKeyPair(self):
+    #generates the private key (to sign) and public key (to verify)
+        privateKey=ed25519.Ed25519PrivateKey.generate()
+        publicKey=privateKey.public_key()
+        return privateKey, publicKey
+
+    def create512BitWM(self, url, shopName, privateKey):
+        normalizedURL=self.normalizeUrl(url)
+        payload=f"{normalizedURL}|{shopName}"
+        signature=privateKey.sign(payload.encode('utf-8'))
+        bitString="".join(format(byte, '08b') for byte in signature)
+        return bitString, signature
+
+if __name__=="__main__":
+    binder=IdentityBinder()
+    private, public=binder.generateKeyPair()
+    URL="https://www.google.com"
+    NAME="varnika"
+    WMbits, sign=binder.create512BitWM(URL, NAME, private)
+    print(f"Target URL: {URL}")
+    print(f"Bitstream length: {len(WMbits)}")
+    print(f"WMbits: {WMbits}")
+    print(f"signature: {sign}")
