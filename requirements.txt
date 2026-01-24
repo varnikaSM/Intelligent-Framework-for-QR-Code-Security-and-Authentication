@@ -1,0 +1,1 @@
+pip install cryptography qrcode pillow pywavelets opencv-python pillow numpy opencv-python qrcode tensorflow 
