@@ -1,1 +1,9 @@
-pip install cryptography qrcode pillow pywavelets opencv-python pillow numpy opencv-python qrcode tensorflow 
+pip install cryptography qrcode pillow pywavelets opencv-python pillow numpy opencv-python qrcode tensorflow \
+
+for U-net encoder:
+
+Encoder (E): A small CNN that takes a QR code and a 512-bit message and produces a watermarked image.
+Noise Layer (N): A non-trainable layer that applies "attacks" (tilt, blur, noise) in real-time.
+Decoder (D): A CNN with a Spatial Transformer to correct the tilt and extract the bits.
+
+pip install torch torchvision matplotlib mlflow
