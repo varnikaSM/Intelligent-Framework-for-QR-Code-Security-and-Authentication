@@ -6,3 +6,14 @@ Distortions Included (15+), Robust (real-world) distortions, Gaussian blur, Moti
 
 For module 3:
 1. pip install qrcode pillow pywavelets opencv-python
+
+For module 2:
+ pip install cryptography
+ we are using Ed25519 signature.
+ 
+
+
+To run:
+
+python -m QRclassifier.Modules.Mod3_Watermarking.LLwatermark1
+python -m QRclassifier.Modules.Mod5_Extraction.ExtractionAndVerification
