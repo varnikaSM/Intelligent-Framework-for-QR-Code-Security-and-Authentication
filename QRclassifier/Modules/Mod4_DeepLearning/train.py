@@ -15,7 +15,7 @@ MSGSIZE = 512
 EPOCHS = 20
 LEARNINGRATE = 0.001
 
-mlflow.set_experiment("QR_Invisible_WatermarkingVersion1")
+mlflow.set_experiment("QR_Invisible_WatermarkingVersion1_")
 
 class QRDataset(Dataset):
     def __init__(self, root):
@@ -84,8 +84,8 @@ class Decoder(nn.Module):
 def train():
     device = torch.device("cpu")
     dataset = QRDataset(DATASET)
-    #subsetIndices = list(range(100)) 
-    #trainSubset = Subset(dataset, subsetIndices)
+    subsetIndices = list(range(1000)) 
+    trainSubset = Subset(dataset, subsetIndices)
     loader = DataLoader(dataset, batch_size=BATCHSIZE, shuffle=True)
     encoder = Encoder().to(device) 
     decoder = Decoder().to(device) 
@@ -94,7 +94,7 @@ def train():
     criterionMsg = nn.BCELoss()
     criterionImg = nn.MSELoss()
 
-    with mlflow.start_run(run_name="CPU_Training_100"):
+    with mlflow.start_run(run_name="CPU_Training"):
         mlflow.log_param("epochs", EPOCHS)
         print("Training started, view progress at http://localhost:5000")
         for epoch in range(EPOCHS):
