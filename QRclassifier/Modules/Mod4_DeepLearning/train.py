@@ -84,37 +84,32 @@ class Decoder(nn.Module):
 def train():
     device = torch.device("cpu")
     dataset = QRDataset(DATASET)
-    subsetIndices = list(range(100)) 
-    trainSubset = Subset(dataset, subsetIndices)
-    loader = DataLoader(trainSubset, batch_size=BATCHSIZE, shuffle=True)
+    #subsetIndices = list(range(100)) 
+    #trainSubset = Subset(dataset, subsetIndices)
+    loader = DataLoader(dataset, batch_size=BATCHSIZE, shuffle=True)
     encoder = Encoder().to(device) 
     decoder = Decoder().to(device) 
     noiseLayer = NoiseLayer().to(device)
     optimizer = optim.Adam(list(encoder.parameters()) + list(decoder.parameters()), lr=LEARNINGRATE)
-    
     criterionMsg = nn.BCELoss()
     criterionImg = nn.MSELoss()
 
     with mlflow.start_run(run_name="CPU_Training_100"):
         mlflow.log_param("epochs", EPOCHS)
         print("Training started, view progress at http://localhost:5000")
-
         for epoch in range(EPOCHS):
             epochMsgLoss = 0
             epochImgLoss = 0
             for i, (img, msg) in enumerate(loader):
-                encodedImg = encoder(img, msg) 
-                noisedImg = noiseLayer(encodedImg)
-                decodedMsg = decoder(noisedImg)
-                
-                lossI = criterionImg(encodedImg, img)
-                lossM = criterionMsg(decodedMsg, msg)
-                totalLoss = lossM + (lossI * 10)
-                
+                encodedImg=encoder(img, msg) 
+                noisedImg=noiseLayer(encodedImg)
+                decodedMsg=decoder(noisedImg)
+                lossI=criterionImg(encodedImg, img)
+                lossM=criterionMsg(decodedMsg, msg)
+                totalLoss=lossM+(lossI*10)
                 optimizer.zero_grad()
                 totalLoss.backward()
                 optimizer.step()
-                
                 epochMsgLoss += lossM.item()
                 epochImgLoss += lossI.item()
             

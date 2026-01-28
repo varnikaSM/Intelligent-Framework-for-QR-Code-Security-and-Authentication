@@ -7,3 +7,6 @@ Noise Layer (N): A non-trainable layer that applies "attacks" (tilt, blur, noise
 Decoder (D): A CNN with a Spatial Transformer to correct the tilt and extract the bits.
 
 pip install torch torchvision matplotlib mlflow
+
+to make it like stegastamp:
+pip install kornia lpips
